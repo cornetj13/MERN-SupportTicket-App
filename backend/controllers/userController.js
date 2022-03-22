@@ -18,13 +18,13 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new Error('Please include all fields.')
     }
 
-    // Find if user already exisits.
-    const userExists = await User.findOne({email})
+    // Find if user already exists.
+    const userExists = await User.findOne({ email })
 
     // Throw error if user exists.
     if(userExists) {
         res.status(400)
-        throw new Error('User alreayd exists')
+        throw new Error('User already exists')
     }
 
     // Hash password.
@@ -44,11 +44,11 @@ const registerUser = asyncHandler(async (req, res) => {
             _id: user._id,
             name: user.name,
             email: user.email,
-            token: generateToken(user._id)
+            token: generateToken(user._id),
         })
     } else {
         res.status(400)
-        throw new Error('Invalid user data')
+        throw new error('Invalid user data')
     }
 })
 
@@ -61,7 +61,7 @@ const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body
 
     // Find user in database.
-    const user = await User.findOne({})
+    const user = await User.findOne({ email })
 
     // Confirm user exists and has provided correct password.
     if(user && (await bcrypt.compare(password, user.password))) {
@@ -77,26 +77,26 @@ const loginUser = asyncHandler(async (req, res) => {
     }
 })
 
-// Generate token function
-const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: '120d'
-    })
-}
-
 // @desc    Get current user
 // @route   /api/users/me
 // @access  Private
 const getMe = asyncHandler(async (req, res) => {
     const user = {
         id: req.user._id,
+        email: req.user.email,
         name: req.user.name,
-        email: req.user.email
+        
 
     }
     res.status(200).json(user)
 })
 
+// Generate token function
+const generateToken = (id) => {
+    return jwt.sign({ id }, process.env.JWT_SECRET, {
+        expiresIn: '120d'
+    })
+}
 module.exports = {
     registerUser,
     loginUser,
