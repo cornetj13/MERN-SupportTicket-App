@@ -7,7 +7,7 @@ const Ticket = require('../models/ticketModel')
 // @route   GET /api/tickets
 // @access  Private
 const getTickets = asyncHandler(async (req, res) => {
-    // Get user using the ID in the JWT
+    // Get user using the ID in the JWT.
     const user = await User.findById(req.user.id)
 
     // Check user exists in database.
